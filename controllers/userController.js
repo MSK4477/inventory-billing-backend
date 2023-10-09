@@ -93,7 +93,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email: email }).select("-password");
+    const user = await User.findOne({ email: email })
     // console.log("verified", user.verified);
 
     if (!user) {
@@ -116,6 +116,8 @@ export const loginUser = asyncHandler(async (req, res) => {
     user.verified = true;
     user.temproaryToken = token;
     await user.save();
+
+    delete user.password;
     res.cookie("token", token, {
       path: "/",
       httpOnly: true,
@@ -123,6 +125,7 @@ export const loginUser = asyncHandler(async (req, res) => {
       sameSite: "none",
       secure: true,
     });
+  
     res.status(200).json({ message: "Login successful", data: user, code: 1 });
   } catch (error) {
     console.error(error);

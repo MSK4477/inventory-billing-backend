@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import dbConnect from "./data/dbConnection/connectToDb.js";
 import cookieParser from "cookie-parser";
 import UserRouter from "./routes/userRouter.js";
@@ -8,7 +9,7 @@ const PORT = 3000;
 
 app.use(cookieParser()); 
 app.use(express.json()); 
-
+app.use(cors());
 dbConnect();
 app.use("/user", UserRouter);
 app.use("/product", productRouter)

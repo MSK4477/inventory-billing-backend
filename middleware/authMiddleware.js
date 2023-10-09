@@ -23,7 +23,7 @@ const protect = asyncHandler(async (req, res, next) => {
     // if(!req.id){
         
     // }
-
+console.log(req.id)
     next();
   } catch (err) {
     console.log(err);

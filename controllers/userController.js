@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import { response } from "express";
 dotenv.config();
 const generateToken = (email) => {
-  return jwt.sign({ email }, process.env.SECRET_KEY, { expiresIn: "30m" });
+  return jwt.sign({ email }, process.env.SECRET_KEY, { expiresIn: "1d" });
 };
 
 // Register User
@@ -307,21 +307,23 @@ export const deleteUser = asyncHandler(async (req, res) => {
 
 export const updateUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, role, image, phone } = req.body;
-  const user = await User.findById(id);
+  const user = await User.findOne({_id:id});
   const user2 = await User.findById(req.id);
+  console.log("user", user)
   console.log("id", id);
   console.log("req.id", req.id);
   if (!user) {
     res.status(404).json({ error: "User Not Found", code: 0 });
     return;
   }
-  if (user.id == req.id || user2.role == "admin") {
-    user.name = name || user.name;
-    user.image = image || user.image;
-    user.role = role || user.role;
-    user.phone = phone || user.phone;
-    const updatedUser = await user.save();
+  if (user._id == req.id || user2.role == "admin") {
+
+    const updatedUser = await User.findOneAndUpdate({_id:id}, req.body,{new:true})
+  //   user.name = name || user.name;
+  //   user.image = image || user.image;
+  //   user.role = role || user.role;
+  //   user.phone = phone || user.phone;
+  //   const updatedUser = await user.save();
     res
       .status(200)
       .json({ message: "User Updated", data: updatedUser, code: 1 });

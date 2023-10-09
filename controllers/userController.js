@@ -93,7 +93,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email: email }).select("-password");
     // console.log("verified", user.verified);
 
     if (!user) {

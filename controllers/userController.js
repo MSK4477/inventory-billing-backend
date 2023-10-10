@@ -39,7 +39,7 @@ export const registerUser = asyncHandler(async (req, res) => {
       temproaryToken: token,
     });
 
-    const verifyUrl = `http://localhost:3000/user/verify?token=${token}`;
+    const verifyUrl = `http://localhost:5173/verify?token=${token}`;
 
     const message = `<h2>Hello ${name}</h2>
       <p>Please use the URL below to verify your account</p>  
@@ -169,7 +169,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
       const token = generateToken(user.email);
       user.temproaryToken = token;
       await user.save();
-      const resetUrl = `http://localhost:3000/user/resetPassword?token=${token}`;
+      const resetUrl = `http://localhost:5173/resetPassword?token=${token}`;
 
       const message = `<h2>Hello ${user.name}</h2>
         <p>Please use the URL below to reset your password</p>  

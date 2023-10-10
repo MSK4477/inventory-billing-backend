@@ -55,7 +55,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     res.status(201).json({
       message:
         "User registered successfully and an Verification Mail Has Sent To Your Mail Click The Link and Verify Your Enail",
-      data: newUser,
+      data: newUser,code:1
     });
   } catch (error) {
     console.error(error);

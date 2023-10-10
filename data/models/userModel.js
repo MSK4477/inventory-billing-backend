@@ -55,7 +55,7 @@ default:"user"
   },
   verified:{
     type: Boolean,
-    default: true,
+    default: false,
   },
   temproaryToken:{
     type: String,

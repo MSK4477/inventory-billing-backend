@@ -157,7 +157,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 // Forgot Password
 export const forgotPassword = asyncHandler(async (req, res) => {
   try {
-    const { email } = req.params;
+    const { email } = req.body;
 
     const user = await User.findOne({ email: email });
 

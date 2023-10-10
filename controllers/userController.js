@@ -183,16 +183,14 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 
       await sendEmail(subject, message, send_to, sent_from);
       res.status(200).json({
-        success: true,
         message: "Reset Link Sent Via Email, Check Your Mail",
         mail: email,
         tkn: token,
         us: user,
+        code:1,
       });
     }
-    res
-      .status(200)
-      .json({ message: "We Send An Email To Reset Your Password", code: 1 });
+   
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "internal server error", code: 2 });

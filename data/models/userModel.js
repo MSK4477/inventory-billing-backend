@@ -39,7 +39,6 @@ default:"user"
   },
   phone: {
     type: String,
-    unique: true,
     required: true,
     validate: [
       validate({

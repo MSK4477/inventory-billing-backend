@@ -126,7 +126,7 @@ export const loginUser = asyncHandler(async (req, res) => {
       secure: true,
     });
   
-    res.status(200).json({ message: "Login successful", data: user.name, code: 1 });
+    res.status(200).json({ message: "Login successful", data:user, code: 1 });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error", code: 2 });

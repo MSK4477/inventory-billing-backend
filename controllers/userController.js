@@ -25,7 +25,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     const token = generateToken(email);
     res.cookie("token", token, {
       path: "/",
-      httpOnly: true,
       expires: new Date(Date.now() + 1000 * 86400), // 1 day
       sameSite: true,
       secure: true,

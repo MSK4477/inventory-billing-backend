@@ -14,7 +14,7 @@ app.use(express.json());
 
 
 app.use(cors({
-  origin: "https://master--unique-madeleine-1c17ab.netlify.app",
+  origin: "https://unique-madeleine-1c17ab.netlify.app",
   credentials: true,
 }));
 

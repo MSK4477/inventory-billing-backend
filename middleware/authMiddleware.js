@@ -6,6 +6,7 @@ dotenv.config();
 
 const protect = asyncHandler(async (req, res, next) => {
   const { tokens } = req.cookies;
+  console.log(tokens)
   if (!tokens) {
     res.status(403).json({ error: "Unauthorized User" });
     return;

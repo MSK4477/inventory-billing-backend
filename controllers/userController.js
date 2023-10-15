@@ -34,7 +34,7 @@ export const registerUser = asyncHandler(async (req, res) => {
       temproaryToken: token,
     });
 
-    const verifyUrl = `http://localhost:5173/verify?token=${token}`;
+    const verifyUrl = `https://master--unique-madeleine-1c17ab.netlify.app/verify?token=${token}`;
 
     const message = `<h2>Hello ${name}</h2>
       <p>Please use the URL below to verify your account</p>  
@@ -161,7 +161,7 @@ console.log(email)
       const token = generateToken(user.email);
       user.temproaryToken = token;
       await user.save();
-      const resetUrl = `http://localhost:5173/resetPassword?token=${token}`;
+      const resetUrl = `https://master--unique-madeleine-1c17ab.netlify.app/resetPassword?token=${token}`;
 
       const message = `<h2>Hello ${user.name}</h2>
         <p>Please use the URL below to reset your password</p>  

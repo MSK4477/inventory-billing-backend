@@ -13,10 +13,18 @@ app.use(cookieParser());
 app.use(express.json());
 
 
-app.use(cors({
-  origin: "https://master--unique-madeleine-1c17ab.netlify.app",
+const allowedOrigins = [
+  'https://unique-madeleine-1c17ab.netlify.app',
+  'https://master--unique-madeleine-1c17ab.netlify.app',
+];
+
+const corsOptions = {
+  origin: allowedOrigins,
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
+
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "hello world" });

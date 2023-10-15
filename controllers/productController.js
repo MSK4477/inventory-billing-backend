@@ -40,12 +40,16 @@ export const createProduct = asyncHandler(async (req, res) => {
 
 //get the products
 export const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({ user: req.id }).populate(
-    "user",
-    "name email phone"
-  );
+  try{
+  const products = await Product.find({ user: req.id })
+if(products){
+  res.status(200).json({ pr: products });
+  
+}
 
-  res.json({ pr: products });
+  }catch(error){
+    res.status(500).json({error:"Internal Server Error", error}) 
+  }
 });
 
 //get the product
@@ -60,7 +64,7 @@ export const getProduct = asyncHandler(async (req, res) => {
     return;
   }
 
-  res.json({ messsage: "Product Found", data: findProduct });
+  res.status(200).json({ messsage: "Product Found", data: findProduct });
 });
 
 //Updating Products

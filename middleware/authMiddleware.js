@@ -5,13 +5,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const protect = asyncHandler(async (req, res, next) => {
-  const { token } = req.cookies;
-  if (!token) {
+  const { tokens } = req.cookies;
+  if (!tokens) {
     res.status(403).json({ error: "Unauthorized User" });
     return;
   }
   try {
-    const decodeToken = await jwt.verify(token, process.env.SECRET_KEY);
+    const decodeToken = await jwt.verify(tokens, process.env.SECRET_KEY);
     const findUser = await User.findOne({ email: decodeToken.email });
 
     if (!findUser) {

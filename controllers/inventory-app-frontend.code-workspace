@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../cardTask/inventory-app-frontend"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../cardTask/chat-client"
+		}
+	],
+	"settings": {}
+}

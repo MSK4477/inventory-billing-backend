@@ -23,12 +23,8 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const token = generateToken(email);
-    res.cookie("token", token, {
-      path: "/",
-      expires: new Date(Date.now() + 1000 * 86400), // 1 day
-      sameSite: true,
-      secure: true,
-    });
+ 
+
 
     let newUser = await User.create({
       name: name,
@@ -71,8 +67,8 @@ export const verifyUser = asyncHandler(async (req, res) => {
     const decodeToken = jwt.verify(token, process.env.SECRET_KEY);
     const findUser = await User.findOne({ email: decodeToken.email });
     if (findUser && findUser.temproaryToken === token) {
-      findUser.temproaryToken = null;
       findUser.verified = true;
+      findUser.temproaryToken = null;
       await findUser.save();
       res.status(200).json({ message: "User Verified Successfully", code: 1 });
     } else {
@@ -116,16 +112,10 @@ export const loginUser = asyncHandler(async (req, res) => {
     user.temproaryToken = token;
     await user.save();
 
-    delete user.password;
-    res.cookie("token", token, {
-      path: "/",
-      httpOnly: true,
-      expires: new Date(Date.now() + 1000 * 86400), // 1 day
-      sameSite: "none",
-      secure: true,
-    });
-  
-    res.status(200).json({ message: "Login successful", data:user, code: 1 });
+    res.cookie("tokens", token, { expire: new Date() + 86400000 });
+
+
+    res.status(200).json({ message: "User has been signed-in successfully", data:user, code: 1 });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error", code: 2 });
@@ -136,15 +126,15 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 export const logoutUser = asyncHandler(async (req, res) => {
   try {
-    const { token } = req.cookies;
-    const verifyToken = jwt.verify(token, process.env.SECRET_KEY);
+    const { tokens } = req.cookies;
+    const verifyToken = jwt.verify(tokens, process.env.SECRET_KEY);
     if (verifyToken) {
       const user = await User.findOne({ email: verifyToken.email });
       user.temproaryToken = null;
       await user.save();
     }
     req.id = null;
-    await res.clearCookie("token");
+    await res.clearCookie("tokens");
     return res.status(200).send({
       message: "User has been signed-out successfully.",
     });
@@ -157,7 +147,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 export const forgotPassword = asyncHandler(async (req, res) => {
   try {
     const { email } = req.body;
-
+console.log(email)
     const user = await User.findOne({ email: email });
 
     if (!user) {
@@ -184,8 +174,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
       res.status(200).json({
         message: "Reset Link Sent Via Email, Check Your Mail",
         mail: email,
-        tkn: token,
-        us: user,
+        user: user,
         code:1,
       });
     }
@@ -238,36 +227,36 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 // Get all users
 
-export const getAllUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({}).select("-password");
-  if (!users) {
-    res.status(404).json({ error: "No Users Found", code: 0 });
-    return;
-  }
-  const user = await User.findById({ _id: req.id }).select("-password");
+// export const getAllUsers = asyncHandler(async (req, res) => {
+//   const users = await User.find({}).select("-password");
+//   if (!users) {
+//     res.status(404).json({ error: "No Users Found", code: 0 });
+//     return;
+//   }
+//   const user = await User.findById({ _id: req.id }).select("-password");
 
-  if (user.role !== "admin") {
-    res
-      .status(401)
-      .json({ error: "Access Denied Admin Role Required", code: 0 });
-    return;
-  } else {
-    res.status(200).json({ message: "All Users", data: users, code: 1 });
-  }
-  res.status(500).json({ error: "internal server error", code: 2 });
-});
+//   if (user.role !== "admin") {
+//     res
+//       .status(401)
+//       .json({ error: "Access Denied Admin Role Required", code: 0 });
+//     return;
+//   } else {
+//     res.status(200).json({ message: "All Users", data: users, code: 1 });
+//   }
+//   res.status(500).json({ error: "internal server error", code: 2 });
+// });
 
 // Get single user
 
 export const getSingleUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { id } = req;
 
   //user to be viewed , id came from params
-  const user = await User.findById(id).select("-password");
+  const user = await User.findById(id);
   console.log("user", user);
 
   //currently Logged in user
-  const user2 = await User.findById(req.id).select("-password");
+  const user2 = await User.findById(req.id);
 
   if (!user) {
     res.status(404).json({ error: "User Not Found", code: 0 });
@@ -275,7 +264,7 @@ export const getSingleUser = asyncHandler(async (req, res) => {
   }
 
   if (user.id == req.id || user2.role == "admin") {
-    res.status(200).json({ message: "User", data: user, code: 1, i: user.id });
+    res.status(200).json(user);
     return;
   }
 
@@ -308,28 +297,18 @@ export const deleteUser = asyncHandler(async (req, res) => {
 export const updateUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await User.findOne({_id:id});
-  const user2 = await User.findById(req.id);
-  console.log("user", user)
-  console.log("id", id);
-  console.log("req.id", req.id);
+
+  
   if (!user) {
     res.status(404).json({ error: "User Not Found", code: 0 });
     return;
   }
-  if (user._id == req.id || user2.role == "admin") {
 
+if(user){
     const updatedUser = await User.findOneAndUpdate({_id:id}, req.body,{new:true})
-  //   user.name = name || user.name;
-  //   user.image = image || user.image;
-  //   user.role = role || user.role;
-  //   user.phone = phone || user.phone;
-  //   const updatedUser = await user.save();
-    res
-      .status(200)
-      .json({ message: "User Updated", data: updatedUser, code: 1 });
+    res.status(200).json({ message: "User Updated", data: updatedUser, code: 1 });
     return;
-  } else {
-    res.status(401).json({ error: "The Given id is Not Found ", code: 0 });
+  }else {
+    res.status(500).json({error:"Internal Server Error", code:2})
   }
-  res.status(500).json({ error: "internal server error", code: 2 });
 });

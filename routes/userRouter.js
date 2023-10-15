@@ -6,7 +6,7 @@ import {
   forgotPassword,
   resetPassword,
   logoutUser,
-  getAllUsers,
+  // getAllUsers,
   getSingleUser,
   updateUser,
   deleteUser
@@ -19,8 +19,8 @@ userRouter.get("/logout", logoutUser);
 userRouter.get("/verify", verifyUser);
 userRouter.post("/forgotPassword", forgotPassword);
 userRouter.post("/resetPassword", resetPassword);
-userRouter.get("/", protect, getAllUsers);
-userRouter.get("/:id", protect, getSingleUser);
+// userRouter.get("/", protect, getAllUsers);
+userRouter.get("/", protect, getSingleUser);
 userRouter.post("/update/:id", protect, updateUser);
 userRouter.delete("/delete/:id", protect, deleteUser);
 export default userRouter;

@@ -16,9 +16,7 @@ app.use(express.json());
 const allowedOrigins = [
   'https://unique-madeleine-1c17ab.netlify.app',
   'https://master--unique-madeleine-1c17ab.netlify.app',
-  "http:localhost:5173",
-  "http:localhost:5174"
-
+  "http:localhost:5173"
 ];
 
 const corsOptions = {

@@ -193,7 +193,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   try {
     const { token } = req.query;
 
-    const { oldPassword, newPassword } = req.body;
+    const { newPassword } = req.body;
 
     const decodeToken = jwt.decode(token, process.env.SECRET_KEY);
 
@@ -203,16 +203,10 @@ export const resetPassword = asyncHandler(async (req, res) => {
       user.temproaryToken = null;
       await user.save();
     }
-    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
 
-    if (!passwordMatch) {
-      res.status(400).json({
-        error: " Old Password Doesn't Match Please Check It..",
-        code: 0,
-      });
-    }
+    
 
-    if (passwordMatch) {
+    if (user) {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       user.password = hashedPassword;
       await user.save();

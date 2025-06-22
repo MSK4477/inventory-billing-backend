@@ -5,29 +5,28 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const protect = asyncHandler(async (req, res, next) => {
-  const { tokens } = req.cookies;
-  console.log(tokens)
-  if (!tokens) {
-    res.status(403).json({ error: "Unauthorized User" });
-    return;
+  const token = req.cookies.tokens;
+
+  if (!token) {
+    return res.status(401).json({ error: "No token found. Unauthorized" });
   }
+
   try {
-    const decodeToken = await jwt.verify(tokens, process.env.SECRET_KEY);
-    const findUser = await User.findOne({ email: decodeToken.email });
+     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
-    if (!findUser) {
-      res.status(403).json({ error: "User Not Authorized" });
-      return;
+     const user = await User.findOne({ email: decoded.email }).select("-password");
+
+    if (!user) {
+      return res.status(403).json({ error: "User not found" });
     }
-    req.id = findUser._id;
 
-    // if(!req.id){
-        
-    // }
-console.log(req.id)
+     req.user = user;
+     req.id = user._id;
+
     next();
   } catch (err) {
-    console.log(err);
+    console.error("JWT Verification Failed:", err);
+    return res.status(401).json({ error: "Token verification failed" });
   }
 });
 
